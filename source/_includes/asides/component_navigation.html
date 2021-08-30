@@ -1,117 +1,57 @@
-{% assign components = site.components | sort: 'title' %}
+{% assign active_installations = site.data.analytics_data.integrations[page.ha_domain] | default: 0 %}
+{% assign percentage = 100.0 | times: active_installations | divided_by: site.data.analytics_data.reports_integrations | round: 1 %}
 <section class="aside-module grid__item one-whole lap-one-half">
-  {% include edit_github.html %}
-
   <div class='brand-logo-container section'>
-    {% if page.logo %}
+    {%- if page.logo -%}
       <img src='/images/supported_brands/{{ page.logo }}' />
-    {% endif %}
+    {%- else -%}
+      <img src='https://brands.home-assistant.io/_/{{ page.ha_domain }}/logo.png' srcset='https://brands.home-assistant.io/_/{{ page.ha_domain }}/logo@2x.png 2x' />
+    {%- endif -%}
+
+    {%- if page.ha_config_flow and page.ha_domain -%}
+      {% my config_flow_start badge domain=page.ha_domain %}
+    {%- endif -%}
   </div>
 
-  {% assign file_parts = page.url | split: '/' | last | split: '.' %}
-
-  {% if file_parts.size == 2 %}
-    {% assign is_platform = true %}
-    {% assign imp_name = file_parts[1] %}
-    {% assign parent_name = file_parts[0] %}
-    {% assign parent_url = parent_name | prepend: '/components/' | append: '/' %}
-    {% assign parent_component = components | where: 'url', parent_url | first %}
-  {% else %}
-    {% assign is_platform = false %}
-    {% assign imp_name = file_parts | first %}
-  {% endif %}
-
-  {% if page.ha_iot_class %}
-    <div class='section'>
-    IoT class<sup><a href='/blog/2016/02/12/classifying-the-internet-of-things/#classifiers'><i class="icon-info-sign"></i></a></sup>: {{ page.ha_iot_class }}
-    </div>
-  {% endif %}
-
-  {% if page.ha_release %}
-    <div class='section'>
-    Introduced in release: {{ page.ha_release }}
-    </div>
-  {% endif %}
-
-  {% if is_platform and parent_name != 'sensor' %}
-    <div class='section'>
-      This is a platform for
-      <a href='{{parent_component.url}}'>the {{parent_component.title}} component</a>.
-    </div>
-
-  {% elsif is_platform == false and imp_name != 'ifttt' %}
-
-    {% assign platforms_found = false %}
-    {% for component in components %}
-      {% if component.url != page.url %}
-        {% assign comp_imp_name = component.url | split: '/' | last | split: '.' | first %}
-        {% if comp_imp_name == imp_name %}
-          {% unless platforms_found %}
-            {% assign platforms_found = true %}
-            <h1 class='title delta'>Platforms</h1>
-            <ul class='divided'>
-          {% endunless %}
-          <li><a href='{{component.url}}'>
-            {{component.title}}
-          </a></li>
-        {% endif %}
-      {% endif %}
-    {% endfor %}
-
-    {% if platforms_found %}
-      </ul>
+  <div class='section'>
+    The {{ page.name | default: page.title }} integration was introduced in Home Assistant {{ page.ha_release | default: "unknown" }},
+    and it's used by <a title="Open analytics.home-assistant.io" href="https://analytics.home-assistant.io/#integrations" target="_blank" rel="noopener">
+    
+    {% if percentage < 1 %}
+      {{ active_installations }}</a> active installations.
+    {% else %}
+      {{ percentage | remove: ".0" }}%</a> of the active installations.
     {% endif %}
 
-  {% endif %}
+    {%- if page.ha_iot_class %}
+      Its IoT class is <a href='/blog/2016/02/12/classifying-the-internet-of-things/#classifiers'>{{ page.ha_iot_class }}</a>
+    {%- endif -%}
 
-
-  {% assign related_found = false %}
-  {% for component in components %}
-    {% if component.url != page.url %}
-      {% assign comp_file_parts = component.url | split: '/' | last | split: '.' %}
-      {% if comp_file_parts.size == 2 %}
-        {% assign comp_imp_name = comp_file_parts | last %}
+    {%- if page.ha_quality_scale %}
+      {% if page.ha_iot_class %}
+        and
       {% else %}
-        {% assign comp_imp_name = comp_file_parts | first %}
+        It
       {% endif %}
+      scores {{page.ha_quality_scale}} on our <a href='/docs/quality_scale/'>quality scale</a>
+    {%- endif -%}.
 
-      {% if comp_imp_name == imp_name %}
-        {% unless related_found %}
-          {% assign related_found = true %}
-          <div class='section'>
-          <h1 class='title delta'>Related components</h1>
-          <ul class='divided'>
-        {% endunless %}
-        <li><a href='{{component.url}}'>
-          {{component.title}}
-        </a></li>
-      {% endif %}
-    {% endif %}
-  {% endfor %}
+    {% if page.ha_domain %}
+    You can find the source for this integration on <a href='https://github.com/home-assistant/core/tree/dev/homeassistant/components/{{ page.ha_domain }}'>GitHub</a>.
+    {%- endif -%}
+  </div>
 
-  {% if related_found %}
-    </ul>
-    </div>
-  {% endif %}
-
-
-
-  {% if page.ha_category %}
+  {%- if page.ha_category.first -%}
     <div class='section'>
-    <h1 class="title delta">Category {{page.ha_category}}</h1>
+    <h1 class="title delta">Categories</h1>
     <ul class='divided'>
-    {% for component in components %}
-      {% if component.ha_category == page.ha_category %}
-        <li>
-          {% if component.url == page.url %}
-            {{component.title}}
-          {% else %}
-            <a href='{{component.url}}'>{{component.title}}</a>
-          {% endif %}
-        </li>
-      {% endif %}
-    {% endfor %}
+    {%- for category in page.ha_category -%}
+      <li>
+        <a href='/integrations/#{{ category | slugify }}'>{{ category }}</a>
+      </li>
+    {%- endfor -%}
     </ul>
     </div>
-  {% endif %}
+  {%- endif -%}
+
 </section>

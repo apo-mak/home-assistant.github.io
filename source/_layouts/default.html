@@ -1,10 +1,10 @@
-{% capture root_url %}{{ site.root | strip_slash }}{% endcapture %}{% include site/head.html %}
-
-  <body {% if page.body_id %} id="{{ page.body_id }}"{% endif %}>
-
-    <header>
+{% include site/head.html %}
+  <body {% if page.body_id %} id="{{ page.body_id }}"{% elsif page.layout == "landingpage" %} id="landingpage"{% endif %}>
+    <header class='site-header'>
       {% include site/header.html %}
     </header>
+
+    <div class="page-content">
 
     {% if page.hero_unit %}
       {% include site/hero_unit.html %}
@@ -14,17 +14,20 @@
       <div class="grid grid-center">
         {% if page.is_post and page.sidebar == false %}
         <div class="grid__item four-fifths lap-one-whole palm-one-whole">
-        {% elsif page.is_homepage %}
+        {% elsif page.is_homepage or page.layout == "landingpage" %}
         <div class="grid__item one-whole">
         {% else %}
         <div class="grid__item two-thirds lap-one-whole palm-one-whole">
         {% endif %}
 
-          {{ content }}
-
+          {% if page.is_homepage or page.layout == "landingpage"  %}
+            {{ content }}
+          {% else %}
+            {{ content | output_modder }}
+          {% endif %}
         </div>
 
-        {% unless page.sidebar == false %}
+        {% unless page.sidebar == false or page.layout == "landingpage"  %}
         <aside id="sidebar" class="grid__item one-third lap-one-whole palm-one-whole">
           {% include site/sidebar.html %}
         </aside>
@@ -36,6 +39,7 @@
       {% include site/footer.html %}
     </footer>
 
+  </div>
     {% include javascripts/scripts.html %}
   </body>
 </html>

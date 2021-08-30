@@ -1,13 +1,13 @@
 ---
-layout: post
 title: "0.21: Improved Web and support for EnOcean, LIRC and Osram Lightify"
 description: "This new release of Home Assistant is lightning fast with the new web stack and progressive web application. On top of that a handful of new components and platforms for EnOcean, LIRC and Osram Lightify support."
 date: 2016-06-08 01:06:00 +0000
 date_formatted: "June 8, 2016"
 author: Paulus Schoutsen
 author_twitter: balloob
-comments: true
-categories: Release-Notes
+categories:
+- Release-Notes
+- Core
 ---
 
 It's time for release 0.21 and it contains massive core improvements: replacement of our home grown HTTP stack with a standardized WSGI stack. This will improve performance, speed, security and make future development of advanced HTTP features a breeze.
@@ -83,17 +83,17 @@ We released two hotfixes to address some issues that couldn't wait till the next
 [@rubund]: https://github.com/rubund
 [@shaftoe]: https://github.com/shaftoe
 [@wkonkel]: https://github.com/wkonkel
-[DTE Energy Bridge]: /components/sensor.dte_energy_bridge/
-[en-lights]: /components/light.enocean/
-[en-sensors]: /components/sensor.enocean/
-[en-switches]: /components/switch.enocean/
-[Feedreader]: /components/feedreader/
-[Flux like switch platform]: /components/switch.flux/
-[Insteon Hub]: /components/insteon_hub/
-[Kodi]: /components/media_player.kodi/
-[LIRC component]: /components/lirc/
-[Osram Lightify]: /components/light.osramlightify/
-[RFXTRX]: /components/rfxtrx/
-[Template switches]: /components/switch.template/
+[DTE Energy Bridge]: /integrations/dte_energy_bridge
+[en-lights]: /integrations/enocean#light
+[en-sensors]: /integrations/enocean#sensor
+[en-switches]: /integrations/enocean#switch
+[Feedreader]: /integrations/feedreader/
+[Flux like switch platform]: /integrations/flux
+[Insteon Hub]: /integrations/insteon/
+[Kodi]: /integrations/kodi
+[LIRC component]: /integrations/lirc/
+[Osram Lightify]: /integrations/osramlightify
+[RFXTRX]: /integrations/rfxtrx/
+[Template switches]: /integrations/switch.template/
 [time condition]: /getting-started/scripts-conditions/#time-condition
 [been updated]: /developers/rest_api/
