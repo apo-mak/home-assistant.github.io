@@ -105,7 +105,7 @@ GEM
     therubyracer (0.12.2)
       libv8 (~> 3.16.14.0)
       ref
-    tilt (2.0.5)
+    tilt (2.0.10)
     titlecase (0.1.1)
     yajl-ruby (1.2.1)
 
