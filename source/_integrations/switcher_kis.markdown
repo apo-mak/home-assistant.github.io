@@ -2,6 +2,9 @@
 title: Switcher
 description: Integrate Switcher devices.
 ha_category:
+  - Climate
+  - Cover
+  - Sensor
   - Switch
 ha_release: 0.93
 ha_iot_class: Local Push
@@ -10,9 +13,14 @@ ha_codeowners:
   - '@thecode'
 ha_domain: switcher_kis
 ha_platforms:
+  - climate
+  - cover
+  - diagnostics
   - sensor
   - switch
 ha_config_flow: true
+ha_quality_scale: platinum
+ha_integration_type: integration
 ---
 
 This `Switcher` integration allows you to control your [Switcher Devices](https://www.switcher.co.il/).
@@ -24,6 +32,8 @@ Supported devices:
 - Switcher V2 (Espressif chipset - from firmware 3.21)
 - Switcher V2 (Qualcomm chipset - from firmware 72.32)
 - Switcher V4
+- Switcher Breeze
+- Switcher Runner
 
 If you completed the integration setup but are still unable to control the device, please make sure your device's firmware is up-to-date.
 
@@ -61,3 +71,8 @@ Note: This does not affect the auto off timer.
 | ------------- | --------- | -------------------------------------------------------------------------------------- | -------------------------- |
 | `entity_id`   | Yes       | Name of the entity id associated with the integration, used for permission validation  | switch.switcher_kis_boiler |
 | `timer_minutes`    | Yes       | Integer containing timer minutes (valid range 1 to 150)                                      | 90                    |
+
+## Notes
+
+Make sure that Home Assistant host's firewall allows incoming traffic on UDP ports 20002 & 20003 and outgoing connections to Switcher device(s) on TCP ports 9957 & 10000.
+If Home Assistant and the Switcher device(s) are not on the same network, you will also need to have their traffic properly forwarded between the two networks.

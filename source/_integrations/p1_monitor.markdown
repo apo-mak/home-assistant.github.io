@@ -10,8 +10,10 @@ ha_codeowners:
   - '@klaasnicolaas'
 ha_domain: p1_monitor
 ha_platforms:
+  - diagnostics
   - sensor
 ha_quality_scale: platinum
+ha_integration_type: integration
 ---
 
 The P1 Monitor integration integrates the [P1 Monitor](https://www.ztatz.nl/p1-monitor/)
@@ -24,7 +26,7 @@ P1 Monitor is a platform that allows you to read the data from your smart meter 
 ## Sensors
 
 The P1 Monitor platform mainly provides sensors that you can use in your
-[energy dashboard][energy].
+[energy dashboard](/energy).
 
 **Note** that by default, the gas consumption entities are disabled, so if you want to use them, you need to enable them manually.
 
@@ -47,10 +49,18 @@ See per phase what your voltage, current and power consumption/production is.
 - Power consumed phases L1/2/3 (W)
 - Power Produced phases L1/2/3 (W)
 
+### WaterMeter
+
+See how much water you consume per day, in total and the number of counted pulses.
+
+- Water Consumption - day (liters)
+- Water Consumption - total (m3)
+- Pulse Count
+
 ### Settings
 
 You can use the rates set in P1 Monitor for your calculations in Home Assistant.
 
-- Gas Consumption Tariff
-- Energy Consumption Tariff Low/High
-- Energy Production Tariff Low/High
+- Gas Consumption Price
+- Energy Consumption Price Low/High
+- Energy Production Price Low/High
