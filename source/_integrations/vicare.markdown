@@ -5,8 +5,6 @@ ha_category:
   - Climate
 ha_release: 0.99
 ha_iot_class: Cloud Polling
-ha_codeowners:
-  - '@oischinger'
 ha_config_flow: true
 ha_domain: vicare
 ha_platforms:
@@ -34,7 +32,7 @@ There is currently support for the following device types within Home Assistant:
 
 Set `username`and `password` to your Viessmann Developer Portal login credentials.
 The required Client ID can be obtained as follows:
-1. Register and login in the [Viessmann Developer Portal](https://developer.viessmann.com).
+1. Register and login in the [Viessmann Developer Portal](https://developer.viessmann.com). Use the same account as the one you registered your device with in ViCare.
 2. In the menu navigate to API Keys.
 3. Create a new OAuth client using the following data:
   ```txt
@@ -42,8 +40,11 @@ The required Client ID can be obtained as follows:
   Google reCAPTCHA: Disabled
   Redirect URIs: vicare://oauth-callback/everest
   ```
+4. Copy the Client ID from the Viessmann portal and enter this in the API Key field in Home Assistant.
 
 The `heating_type` can either be `auto` to automatically find the most suitable type for your device or one of `gas`, `oil`, `pellets`, `heatpump`, `fuelcell`, `hybrid`.
+
+Important: the redirect URI that you configure requires that you perform the initial setup on a device that has the ViCare application installed. If your device does not know how to handle the `vicare://` URL, you will receive an **Invalid credentials** notification and the setup procedure will fail. This means: install the ViCare app on your phone and set up the integration from your phone.
 
 Multiple device instances might be generated depending on the number of burners and/or circuits of your installation. If there is more than a single instance all devices are suffixed with the circuit or burner ID.
 
@@ -54,7 +55,7 @@ The Viessmann API is rate-limited. If you exceed one of the limits below you wil
 - Limit 1: 120 calls for a time window of 10 minutes
 - Limit 2: 1450 calls for a time window of 24 hours
 
-The default `scan_interval` of 60 seconds will work within these limits. Note however that any additional requests to the API, e.g., by setting the temperature via the integration but also by interacting with the ViCare app also counts into those limits. It is therefore advised to adjust the scan_interval to your usage scenario.
+The integration polls the Viessmann API every 60 seconds and will work within these limits. Note however that any additional requests to the API, e.g., by setting the temperature via the integration but also by interacting with the ViCare app also counts into those limits.
 
 ## Climate
 
@@ -62,7 +63,7 @@ A note about the current temperature attribute: Viessmann devices with room temp
 
 ### Supported services `climate.vicare_heating`
 
-The following services of the [Climate component](/integrations/climate/) are provided by the ViCare integration: `set_temperature`, `set_hvac_mode`, `set_preset_mode` 
+The following services of the [Climate integration](/integrations/climate/) are provided by the ViCare integration: `set_temperature`, `set_hvac_mode`, `set_preset_mode` 
 
 #### Service `set_temperature`
 
@@ -79,7 +80,7 @@ Note that `set_temperature` will always affect the current normal temperature or
 
 Set HVAC mode for the climate device. The following modes are supported:
 
-The `climate.vicare_heating` component has the following mapping of HVAC modes to Viessmann operation modes:
+The `climate.vicare_heating` integration has the following mapping of HVAC modes to Viessmann operation modes:
 
 | HVAC mode | Viessmann mode | Description |
 | ---------------------- | -------- | ----------- |
@@ -113,11 +114,11 @@ Eco mode reduces the target temperature by 3°C, whereas Comfort mode sets the t
 
 ## Water Heater
 
-It is not possible to turn on/off water heating via the Water Heater component since this would conflict with the operation modes of the heating component. Therefore the operation mode of that component is just available as an attribute and cannot be modified.
+It is not possible to turn on/off water heating via the Water Heater integration since this would conflict with the operation modes of the heating integration. Therefore the operation mode of that integration is just available as an attribute and cannot be modified.
 
 ### Supported services `water_heater.vicare_water`
 
-The following services of the [Water Heater component](/integrations/water_heater/) are provided by the ViCare integration: `set_temperature`
+The following services of the [Water Heater integration](/integrations/water_heater/) are provided by the ViCare integration: `set_temperature`
 
 #### Service `set_temperature`
 

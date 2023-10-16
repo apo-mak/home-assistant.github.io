@@ -19,7 +19,7 @@ ha_platforms:
 ha_integration_type: integration
 ---
 
-The `flume` sensor will show you the current [flume](https://portal.flumewater.com) status for the given Device ID.
+The Flume integration will show you the current [Flume](https://flumewater.com/) status for the given Device ID.
 
 Flume monitors the real-time status of your home water meter. Allowing the end-user to detect small leaks, gain real-time information on household water consumption, set water goals and budgets, and receive push notifications when suspicious water activities occur. 
 
@@ -31,13 +31,13 @@ To add `Flume` to your installation, go to **Settings** -> **Devices & Services*
 
 ## Notifications
 
-Flume notifications are available via binary sensors. To clear the notifications, you will need to use your Flume app or go to: [https://portal.flumewater.com/notifications]([https://portal.flumewater.com/notifications]) and clear the notification in question.
+Flume notifications are available via binary sensors. To clear the notifications, you will need to use your Flume app or go to: [https://portal.flumewater.com/notifications](https://portal.flumewater.com/notifications) and clear the notification in question.
 
 The following notifications are supported:
 
-* Bridge disconnected
-* High flow
-* Leak detected
+- Bridge disconnected
+- High flow
+- Leak detected
 
 
 ## Configuration for Binary Sensor

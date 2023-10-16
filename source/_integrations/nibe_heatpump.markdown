@@ -11,10 +11,13 @@ ha_codeowners:
 ha_domain: nibe_heatpump
 ha_platforms:
   - binary_sensor
+  - button
+  - climate
   - number
   - select
   - sensor
   - switch
+  - water_heater
 ha_integration_type: integration
 ---
 
@@ -26,9 +29,12 @@ Supported devices:
 - S1145/S1155
 - F1245/F1255
 - F1355/F1355
+- S2125
+- S320/S325
 - F370
 - F470
 - F730
+- S735
 - F750
 - SMO40
 - SMOS40
@@ -63,7 +69,7 @@ This can be built using a Raspberry Pi with an RS485 hat, an Arduino with RS485 
 
 #### ESPHome
 
-A ESPHome base hardware solution also works well and integrate nicely into Home Assistant.
+An ESPHome base hardware solution also works well, and integrate nicely into Home Assistant.
 
 - [Homepage](https://github.com/elupus/esphome-nibe)
 
