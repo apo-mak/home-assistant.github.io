@@ -1,43 +1,43 @@
 ---
-layout: post
 title: "Smart Baby Monitor"
 description: "How to build your own smart baby monitor"
-date: 2017-02-04 00:00:00 +0100
-date_formatted: "February 4, 2017"
+date: 2017-02-03 01:00:00 UTC
+date_formatted: "February 3, 2017"
 author: Pascal Vizeli
-comments: true
 categories: How-To
 og_image: /images/blog/2017-02-babyphone/social.png
 ---
 
-One of the hardest part of being a parent is keeping a constant eye on the baby to make sure that baby is doing well. Thus, it is not surprising that baby monitors are one of the fastest growing baby product category. However, many of the baby monitors available on the market are rather dumb and expect the parents to keep looking at the video stream or listen to the audio. This how-to will help you create a smart baby monitor on a budget and integrate it with Home Assitant. Instead of relying on the poor quality baby monitor speakers, we use our existing speakers (eg. Sonos). We can also send notifications (with pictures) to avoid constant monitoring of the feed.
+One of the hardest part of being a parent is keeping a constant eye on the baby to make sure that the baby is doing well. Thus, it is not surprising that baby monitors are one of the fastest growing baby product category. However, many of the baby monitors available on the market are rather dumb and expect the parents to keep looking at the video stream or listen to the audio. This how-to will help you create a smart baby monitor on a budget and integrate it with Home Assistant. Instead of relying on the poor quality baby monitor speakers, we use our existing speakers (eg. Sonos). We can also send notifications (with pictures) to avoid constant monitoring of the feed.
 
 Obviously, you can use the setup as a general purpose surveillance system to monitor noise in the whole house.
 
 <!--more-->
 
-### {% linkable_title Setup %}
+### Setup
 
-We need an IP camera that can capture sound in the baby's room. It is also possible to use a Raspberry Pi with a microphone and send the audio to Home Assistant with `ffmpeg -f alsa -i hw:1,0 -vn -f rtp rtp://236.0.0.1:2000` over multicast. We can set the `input` option on the Home Assistant side to `rtp://236.0.0.1:2000` in same network.
+We need an IP camera that can capture sound in the baby's room. It is also possible to use a Raspberry Pi with a microphone and send the audio to Home Assistant with `ffmpeg -f alsa -i hw:1,0 -vn -f rtp rtp://236.0.0.1:2000` over multicast. We can set the `input` option on the Home Assistant side to `rtp://236.0.0.1:2000` in the same network.
 
-Next, we attach a FFmpeg noise binary sensor to our IP camera. The sensor has an output `option` that allows us to send the output to an [icecast2](http://icecast.org/) server for playing over speakers integrated with Home Assistant (eg. Sonos). We can use the binary sensor in our automation. You can ignore the icecast2 setup if you don't want to play the audio after the noise sensor trigger.
+Next, we attach a `ffmpeg_noise` binary sensor to our IP camera. The sensor has an output `option` that allows us to send the output to an [icecast2](http://icecast.org/) server for playing over speakers integrated with Home Assistant. We can use the binary sensor in our automation. You can ignore the icecast2 setup if you don't want to play the audio after the noise sensor trigger.
 
-<p class='note'>
+<div class='note'>
+
 We change the platform name for binary sensor in 0.38 from `ffmpeg` to `ffmpeg_noise`. Also all service going to component and was rename from `binary_sensor.ffmpeg_xy` to `ffmpeg.xy`.
-</p>
 
-On Raspbian Jessie, you can setup [FFmpeg](/components/ffmpeg) and install a [icecast2](http://icecast.org/) server using:
+</div>
+
+On Raspbian Jessie, you can setup [FFmpeg](/integrations/ffmpeg) and install an [icecast2](http://icecast.org/) server using:
 
 ```bash
-$ sudo echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list
-$ sudo apt-get update
-$ sudo apt-get -t jessie-backports install ffmpeg
-$ sudo apt-get install icecast2
+sudo echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list
+sudo apt-get update
+sudo apt-get -t jessie-backports install ffmpeg
+sudo apt-get install icecast2
 ```
 
-We setup a icecast mount point for our babyphone and update `/etc/icecast2/icecast.xml`:
+We setup an icecast mount point for our babyphone and update `/etc/icecast2/icecast.xml`:
 
-```
+```xml
 <mount>
     <mount-name>/babyphone.mp3</mount-name>
     <stream-name>Babyphone</stream-name>
@@ -47,7 +47,7 @@ We setup a icecast mount point for our babyphone and update `/etc/icecast2/iceca
 </mount>
 ```
 
-Now we can add the noise sensor to Home Assistant. We can lower the sensitivity of the sensor (so that you are not inundated with notifications for every cough of the baby) to 2 seconds using the `duration` option. The sensor should wait 60 seconds before restoring and it prevent us that a wine break will triggering a new alarm.
+Now we can add the noise sensor to Home Assistant. We lower the sensitivity of the sensor (so that you are not inundated with notifications for every cough of the baby) to 2 seconds using the `duration` option. The sensor should wait 60 seconds before restoring and it prevent us that a wine break will triggering a new alarm.
 
 We can optimize the audio stream for human voice by using a highpass filter with 300 Hz and a lowpass filter with 2500 Hz. This filters out all non-human sounds such as background noise. We can even add a volume amplifier if the microphone volume is too low (you can remove it from `extra_arguments`). For icecast2 we convert the audio stream to mp3 with samplerate of 16000 (which is the minimum for Sonos speakers). We use `peak` to set the threshold for noise detection, where 0 dB is very loud and -100 dB is low.
 
@@ -72,75 +72,84 @@ input_boolean:
     initial: off
 
 automation:
- - alias: 'Babyphone on'
+ - alias: "Babyphone on"
    trigger:
      platform: state
      entity_id: input_boolean.babyphone
-     from: 'off'
-     to: 'on'
+     from: "off"
+     to: "on"
    action:
      service: ffmpeg.start
-     entity_id: binary_sensor.ffmpeg_noise
+     target:
+       entity_id: binary_sensor.ffmpeg_noise
 
- - alias: 'Babyphone off'
+ - alias: "Babyphone off"
    trigger:
      platform: state
      entity_id: input_boolean.babyphone
-     from: 'on'
-     to: 'off'
+     from: "on"
+     to: "off"
    action:
      service: ffmpeg.stop
-     entity_id: binary_sensor.ffmpeg_noise
+     target:
+       entity_id: binary_sensor.ffmpeg_noise
 ```
 
-### {% linkable_title Trigger a alarm %}
+### Trigger an alarm
 
 Now we can make a lot stuff. Here is a simple example of an automation what should be possible with Sonos speakers.
 
 ```yaml
 automation:
- - alias: 'Babyphone alarm on'
+ - alias: "Babyphone alarm on"
    trigger:
      platform: state
      entity_id: binary_sensor.ffmpeg_noise
-     from: 'off'
-     to: 'on'
+     from: "off"
+     to: "on"
    action:
     - service: media_player.sonos_snapshot
-      entity_id: media_player.bedroom
+      target:
+        entity_id: media_player.bedroom
     - service: media_player.sonos_unjoin
-      entity_id: media_player.bedroom
+      target:
+        entity_id: media_player.bedroom
     - service: media_player.volume_set
-      entity_id: media_player.bedroom
+      target:
+        entity_id: media_player.bedroom
       data:
         volume_level: 0.4
     - service: media_player.play_media
-      entity_id: media_player.bedroom
+      target:
+        entity_id: media_player.bedroom
       data:
-        media_content_type: 'music'
+        media_content_type: "music"
         media_content_id: http://my_ip_icecast:8000/babyphone.mp3
     - service: light.turn_on:
-      entity_id:
+      target:
+        entity_id:
        - light.floor
        - light.bedroom
       data:
         brightness: 150
 
- - alias: 'Babyphone alarm off'
+ - alias: "Babyphone alarm off"
    trigger:
      platform: state
      entity_id: binary_sensor.ffmpeg_noise
-     from: 'on'
-     to: 'off'
+     from: "on"
+     to: "off"
    action:
     - service: media_player.sonos_restore
-      entity_id: media_player.bedroom
+      target:
+        entity_id: media_player.bedroom
     - service: light.turn_off:
-      entity_id:
-       - light.floor
-       - light.bedroom
+      target:
+        entity_id:
+         - light.floor
+         - light.bedroom
 ```
 
-### {% linkable_title Thanks %}
+### Thanks
 
 Special thanks to [arsaboo](https://github.com/arsaboo) for assistance in writing this blogpost.

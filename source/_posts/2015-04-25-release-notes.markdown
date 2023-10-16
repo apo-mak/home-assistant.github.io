@@ -1,13 +1,13 @@
 ---
-layout: post
 title: "Release notes for April 25, 2015"
 description: "Introducing support for line charts, a logbook, ISY994 hub, Transmission and modbus."
 date: 2015-04-25 6:57 -0700
 date_formatted: "April 25, 2015"
 author: Paulus Schoutsen
 author_twitter: balloob
-comments: true
-categories: Release-Notes
+categories:
+- Release-Notes
+- Core
 ---
 
 It's been a month since the latest update and a lot has happened again. Here a quick overview of the new things.
@@ -22,7 +22,7 @@ __Line Charts__
 __ISY994 hub support__
 <img src='/images/supported_brands/universal_devices.png' style='border:none; box-shadow: none; float: right;' height='50' /> [Ryan](https://github.com/rmkraus) has contributed support to integrate the ISY994 hub by Universal Devices. This allows you to integrate your X10/Insteon sensors, switches and lights.
 
-He has created an extensive getting started guide which can be found on [the ISY994 component page](/components/isy994/).
+He has created an extensive getting started guide which can be found on [the ISY994 component page](/integrations/isy994/).
 
 ```yaml
 # Example configuration.yaml entry

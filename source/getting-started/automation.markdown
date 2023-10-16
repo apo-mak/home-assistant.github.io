@@ -1,54 +1,44 @@
 ---
-layout: page
 title: "Automating Home Assistant"
-description: "Steps to help you get automation setup in Home Assistant."
-date: 2015-09-19 09:40
-sidebar: true
-comments: false
-sharing: true
-footer: true
+description: "A quick intro on getting your first automation going."
 ---
 
-When all your devices are set up, it's time to put the cherry on the pie: automation. Home Assistant offers [a few built-in automations](/components/#automation) – but you'll be using the automation component to set up your own rules, for the most part.
+Once your {% term devices %} are set up, it's time to put the cherry on the pie: {% term automation %}. In this guide we're going to create a simple automation rule to turn on the lights when the sun sets. Of course, this assumes that you have set up an integration that provides a light at this point.
 
-Home Assistant offers a wide range of automation configurations. In the next few pages, we'll try to guide you through all the different possibilities and options. Besides this documentation, there are also a couple of people who have made their automations [publicly available][cookbook-config].
+In the user interface in the sidebar, click **{% my automations title="Settings > Automations & Scenes" %}**. You will now see the automation screen from which you can manage all the automations in Home Assistant.
 
-[cookbook-config]: /cookbook/#example-configurationyaml
+![The automation editor.](/images/getting-started/automation-editor.png)
 
-### {% linkable_title Automation basics %}
+Click the blue button at the bottom right to create a new automation. A dialog will appear. Choose **Create new automation**. You are presented with a blank automation screen.
 
-Before you can go ahead and create your own automations, it's important to learn the basics. To explore these, let's have a look at the following example home automation rule:
+![The start of a new automation.](/images/getting-started/new-automation.png)
 
-```text
-(trigger)    When Paulus arrives home
-(condition)  and it is after sunset:
-(action)     Turn the lights in the living room on
+The first thing we will do is set a name. Enter "Turn Lights On at Sunset".
+
+The second step is defining what should {% term trigger %} our automation to run. In this case, we want to use the event of the sun setting to trigger our automation. However, if we would turn on the lights when the sun actually sets, it would be too late as it already gets quite dark while it's setting. So we're going to add an offset.
+
+In the trigger section, click on the dropdown menu and change the trigger type to **Sun**. It allows us to choose sunrise or sunset, so go ahead and pick **Sunset**. As we discussed, we want our automation to be triggered a little before the sun actually sets, so let's add `-00:30` as the offset. This indicates that the automation will be triggered 30 minutes before the sun actually sets. Neat!
+
+![A new automation with a sun trigger filled in.](/images/getting-started/new-trigger.png)
+
+Once we have defined our trigger, scroll down to the action section. Make sure the action type is set to **Call service** and change the service to `light.turn_on`. For this automation we're going to turn on all lights, so let's change the service data to:
+
+```yaml
+entity_id: all
 ```
 
-The example consists of three different parts: a trigger, a condition and an action.
+![A new automation with the action set up to turn on the lights.](/images/getting-started/action.png)
 
-The first line is the **trigger** of the automation rule. Triggers describe events that should trigger the automation rule. In this case, it is a person arriving home, which can be observed in Home Assistant by observing the state of Paulus changing from 'not_home' to 'home'.
+Click the orange button to save the automation. Now wait till it's 30 minutes until the sun sets and see your automation magic!
 
-The second line is the **condition**. Conditions are optional tests that can limit an automation rule to only work in your specific use cases. A condition will test against the current state of the system. This includes the current time, devices, people and other things like the sun. In this case, we only want to act when the sun has set.
+{% include getting-started/next_step.html step="Presence detection" link="/getting-started/presence-detection/" %}
 
-The third part is the **action**, which will be performed when a rule is triggered and all conditions are met. For example, it can turn a light on, set the temperature on your thermostat or activate a scene.
+If after completing this getting started you are interested in reading more
+about automations, we recommend the following pages:
 
-<p class='note'>
-The difference between a condition and a trigger can be confusing as they are very similar. Triggers look at the actions, while conditions look at the results: turning a light on versus a light being on.
-</p>
+- [Triggers](/docs/automation/trigger/)
+- [Conditions](/docs/automation/condition/)
+- [Actions](/docs/automation/action/)
 
-### {% linkable_title Exploring the internal state %}
-
-Automation rules interact directly with the internal state of Home Assistant, so you'll need to familiarize yourself with it. Home Assistant exposes its current state via the developer tools. These are available at the bottom of the sidebar in the frontend. The <img src='/images/screenshots/developer-tool-states-icon.png' class='no-shadow' height='38' /> icon will show all currently available states. An entity can be anything. A light, a switch, a person and even the sun. A state consists of the following parts:
-
-| Name | Description | Example |
-| ---- | ----- | ---- |
-| Entity ID | Unique identifier for the entity. | `light.kitchen`
-| State | The current state of the device. | `home`
-| Attributes | Extra data related to the device and/or current state. | `brightness`
-
-State changes can be used as the source of triggers and the current state can be used in conditions.
-
-Actions are all about calling services. To explore the available services open the <img src='/images/screenshots/developer-tool-services-icon.png' class='no-shadow' height='38' /> Services developer tool. Services allow to change anything. For example turn on a light, run a script or enable a scene. Each service has a domain and a name. For example the service `light.turn_on` is capable of turning on any light in your system. Services can be passed parameters to for example tell which device to turn on or what color to use.
-
-### [Next step: Your First Automation &raquo;](/getting-started/automation-create-first/)
+Please note, these pages may require a bit more experience with Home Assistant
+than you probably have at this point of this tutorial.

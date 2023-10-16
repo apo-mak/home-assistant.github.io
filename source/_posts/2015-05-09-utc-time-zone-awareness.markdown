@@ -1,13 +1,13 @@
 ---
-layout: post
 title: "UTC & Time zone awareness"
 description: "The Home Assistant core now uses UTC as the internal date time."
 date: 2015-05-09 23:08 0000
 date_formatted: "May 9, 2015"
 author: Paulus Schoutsen
 author_twitter: balloob
-comments: true
-categories: Release-Notes
+categories:
+- Release-Notes
+- Core
 ---
 
 I have recently merged code to refactor Home Assistant to use only UTC times internally. A much needed refactor. I've added some extra test coverage to time sensitive parts to ensure stability. The code has been live in the dev branch for the last 9 days and will be soon released to the master branch.
@@ -29,10 +29,10 @@ The changes to the code are mostly backwards compatible. The old `hass.track_tim
 
 This refactor adds a new migration for the database adding a `utc_offset` column to events and states. This information is currently not used but can prove useful in the future when we start analyzing the historical data.
 
-### {% linkable_title Backwards incompatible stuff %}
+### Backwards incompatible stuff
 
 All built-in components have been upgraded. The following list is only for people that run custom components:
 
- * `hass.track_time_change` and `hass.track_point_in_time` will now return a time zone aware datetime object. Python does not allow comparing a naive with an aware datetime object.
- * the sun attributes for rising and setting are now in UTC. The methods `sun.next_rising(hass)` and `sun.next_setting(hass)` are backwards compatible, just be careful if you used to read the raw attributes.
- * the API sends all times in UTC. If you use anything else besides the frontend to talk to HA, make sure it handles it differently.
+- `hass.track_time_change` and `hass.track_point_in_time` will now return a time zone aware datetime object. Python does not allow comparing a naive with an aware datetime object.
+- the sun attributes for rising and setting are now in UTC. The methods `sun.next_rising(hass)` and `sun.next_setting(hass)` are backwards compatible, just be careful if you used to read the raw attributes.
+- the API sends all times in UTC. If you use anything else besides the frontend to talk to HA, make sure it handles it differently.
